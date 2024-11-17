@@ -1,0 +1,85 @@
+<!-- /views/admin/contact.ejs -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Contact Page</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="/css/admin.css">
+</head>
+<body>
+    <%-include('navbar.ejs')%>
+    
+    <div class="container-fluid">
+        <div class="row">
+            <main role="main" class="col-md-9 ml-sm-auto col-lg-10 px-md-4">
+                <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+                    <h1 class="h2">Contact Messages</h1>
+                </div>
+
+                <% if (status === 'success') { %>
+                    <div class="alert alert-success">Message sent successfully!</div>
+                <% } %>
+
+                <div class="table-responsive">
+                    <table class="table table-striped table-sm">
+                        <thead>
+                            <tr>
+                                <th>Name</th>
+                                <th>Email</th>
+                                <th>Message</th>
+                                <th>Date</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <% messages.forEach(message => { %>
+                                <tr>
+                                    <td><%= message.name %></td>
+                                    <td><%= message.email %></td>
+                                    <td><%= message.message.substring(0, 50) %>...</td>
+                                    <td><%= message.date %></td>
+                                    <td>
+                                        <button class="btn btn-sm btn-primary" data-toggle="modal" data-target="#messageModal<%= message._id %>">View</button>
+                                        <form action="/admin/contact/delete/<%= message._id %>" method="POST" style="display:inline;">
+                                            <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('Are you sure you want to delete this message?')">Delete</button>
+                                        </form>
+                                    </td>
+                                </tr>
+
+                                <!-- Modal for full message -->
+                                <div class="modal fade" id="messageModal<%= message._id %>" tabindex="-1" role="dialog" aria-labelledby="messageModalLabel" aria-hidden="true">
+                                    <div class="modal-dialog" role="document">
+                                        <div class="modal-content">
+                                            <div class="modal-header">
+                                                <h5 class="modal-title" id="messageModalLabel">Message from <%= message.name %></h5>
+                                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                    <span aria-hidden="true">&times;</span>
+                                                </button>
+                                            </div>
+                                            <div class="modal-body">
+                                                <p><strong>Email:</strong> <%= message.email %></p>
+                                                <p><strong>Date:</strong> <%= message.date %></p>
+                                                <p><strong>Message:</strong></p>
+                                                <p><%= message.message %></p>
+                                            </div>
+                                            <div class="modal-footer">
+                                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            <% }) %>
+                        </tbody>
+                    </table>
+                </div>
+            </main>
+        </div>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.3/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+</html>
