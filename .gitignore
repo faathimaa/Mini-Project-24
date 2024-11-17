@@ -1,0 +1,34 @@
+# Node modules
+/node_modules/
+
+# Logs
+/logs/
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Environment variables
+.env
+
+# Build and output directories
+/dist/
+/build/
+public/
+
+# Image uploads
+/uploads/
+
+# OS-specific files
+.DS_Store
+Thumbs.db
+
+# IDE-specific files
+.vscode/
+.idea/
+*.iml
+
+# Compiled files
+*.tsbuildinfo
+*.map
+*.out
