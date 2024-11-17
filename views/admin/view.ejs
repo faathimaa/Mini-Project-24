@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css" integrity="sha384-xOolHFLEh07PJGoPkLv1IbcEPTNtaed2xpHsD9ESMhqIYd0nLMwNLD69Npy4HI+N" crossorigin="anonymous">
+	<script src="https://cdn.jsdelivr.net/npm/jquery@3.5.1/dist/jquery.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
+	<script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-Fy6S3B9q64WdZWQUiU+q4/2Lc9npb8tCaSX9FK7E8HnRr0Jz8D6OP9dO5Vg3Q9ct" crossorigin="anonymous"></script>
+	<link rel="preconnect" href="https://fonts.googleapis.com">
+	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+	<link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap" rel="stylesheet">
+	<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@48,400,0,0" />
+	<title></title>
+	<link rel="icon" type="image/x-icon" href="images/Main/Logo.png">
+	</head>
+	<body>
+        <%-include('navbar.ejs')%>
+		<div class="container-fluid">
+			
+			<div class="row mt-4">
+				<div class="col-5">
+					<h3><u>Item Details</u></h3>
+					<img src="/uploads/<%=item.photo%>" style="width: 50%;margin-top: 20px;">
+					<h4 class="mt-3"><%=item.name%></h4>
+					<h6 class="mt-3"><%=item.text%></h6>
+
+					<br>
+					<h3 class="mt-5">Item Details</h3>
+					<p>Highest Bid : <%=item.highest.amount%></p>
+
+					<%if(item.active){%>
+						<form action="/admin/delete/<%=item.id%>" method="POST" onsubmit="return confirm('Are you sure you want to stop this auction?');">
+							<button type="submit" class="btn btn-lg btn-danger mt-4">Stop Bidding</button>
+						</form>
+					<%}%>
+				</div>
+				<div class="col-7">
+					<h3>Bids</h3>
+					<div style="width: 100%;" class="table-responsive"></div>
+					<table class="table table-bordered">
+						<tr>
+							<th>User</th>
+							<th>Amount</th>
+						</tr>
+						<% item.bids.forEach((b)=>{ %>
+							<tr>
+								<td><%=b.username%></td>
+								<td><%=b.amount%></td>
+							</tr>
+						<% }) %>
+					</table>
+				</div>
+			</div>
+		</div>
+	</body>
+</html>
