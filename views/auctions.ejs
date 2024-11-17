@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css" integrity="sha384-xOolHFLEh07PJGoPkLv1IbcEPTNtaed2xpHsD9ESMhqIYd0nLMwNLD69Npy4HI+N" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/jquery@3.5.1/dist/jquery.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-Fy6S3B9q64WdZWQUiU+q4/2Lc9npb8tCaSX9FK7E8HnRr0Jz8D6OP9dO5Vg3Q9ct" crossorigin="anonymous"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@48,400,0,0" />
+    <link rel="stylesheet" href="/css/style.css">
+    <title>OAS-Auctions</title>
+    <link rel="icon" type="image/x-icon" href="/images/Main/Logo.png">
+</head>
+<body>
+    <%- include('navbar.ejs') %>
+    <div class="slider">
+        <section class="feature-item-carousal">
+            <main> 
+                <div class="container-fluid my-4 p-3">
+                    <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 g-3">
+                        <% items.forEach((i) => { %>
+                            <% if (i.status === 'completed' || i.status === 'ongoing' || i.status === 'pending') { %>
+                                <div class="col mb-4">
+                                    <div class="card h-100 shadow-sm">
+                                        <img src="/uploads/<%= i.photo %>" class="card-img-top" alt="Image not available">
+                                        <div class="card-body d-flex flex-column">
+                                            <div class="mb-2">
+                                                <div class="label-top-1 shadow-sm"><%= i.bids.length %> Bids</div>
+                                                <h5 class="card-title mt-2"><%= i.name %></h5>
+                                                <p><%= i.text %></p>
+                                                <p><strong>Status:</strong> <%= i.status %></p>
+                                            </div>
+                                            <p class="auction-datetime"><strong>Auction Starts:</strong> <%= new Date(i.startTime).toLocaleString() %></p>
+                                            <p class="auction-datetime"><strong>Auction Ends:</strong> <%= new Date(i.endTime).toLocaleString() %></p>
+     
+                                            <div class="text-center mt-auto">
+                                                <div class="auction-container">
+                                                    <% if (i.status === 'completed') { %>
+                                                        <p style="font-size: 15px; font-weight: 700;">Auction Ended</p>
+                                                        <% if (i.highest && i.highest.username) { %>
+                                                            <p>Winner: <%= i.highest.username %> - Amount: <%= i.highest.amount %></p>
+                                                        <% } else { %>
+                                                            <p>Auction ended without bids</p>
+                                                        <% } %>
+                                                    <% } else { %>
+                                                        <p style="font-size: 15px; font-weight: 700;">Time Left: <span class="timer badge rounded-pill bg-white" id="timer-<%= i._id %>">Loading...</span></p>
+                                                        <% if (i.status === 'ongoing') { %>
+                                                            <a href='/bid/<%= i._id %>'><button class="bid-now-btn">Bid Now</button></a>
+                                                        <% } %>
+                                                    <% } %>
+
+                                                    <% if (isAdmin) { %>
+                                                        <form action="/auctions/approve/<%= i._id %>" method="POST" class="mt-2">
+                                                            <button type="submit" class="btn btn-success">Approve</button>
+                                                        </form>
+                                                    <% } %>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <script>
+                                    (function() {
+                                        // Auction start and end times
+                                        let startTime = new Date("<%= i.startTime %>").getTime();
+                                        let endTime = new Date("<%= i.endTime %>").getTime();
+                                        let currentTime = Date.now();
+                        
+                                        // Timer element for this auction
+                                        let timerElement = document.getElementById("timer-<%= i._id %>");
+                        
+                                        // Function to update the timer
+                                        function updateTimer() {
+                                            let now = Date.now(); // Current time
+                        
+                                            if (now < startTime) {
+                                                // Auction has not started yet
+                                                timerElement.innerHTML = "Auction not started";
+                                            } else if (now >= startTime && now < endTime) {
+                                                // Auction is live, calculate remaining time
+                                                let timeLeft = endTime - now;
+                        
+                                                let hours = Math.floor((timeLeft % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+                                                let minutes = Math.floor((timeLeft % (1000 * 60 * 60)) / (1000 * 60));
+                                                let seconds = Math.floor((timeLeft % (1000 * 60)) / 1000);
+                        
+                                                // Display the countdown
+                                                timerElement.innerHTML = hours + "h " + minutes + "m " + seconds + "s";
+                        
+                                                // Stop the timer when time is up
+                                                if (timeLeft <= 0) {
+                                                    clearInterval(timerInterval);
+                                                    timerElement.innerHTML = "Bid over";
+                                                }
+                                            } else {
+                                                // Auction has ended
+                                                timerElement.innerHTML = "Bid over";
+                                            }
+                                        }
+                        
+                                        // Initial call to display the correct status immediately
+                                        updateTimer();
+                        
+                                        // Only start the countdown interval if the auction is live
+                                        if (currentTime >= startTime && currentTime < endTime) {
+                                            var timerInterval = setInterval(updateTimer, 1000);
+                                        } else if (currentTime >= endTime) {
+                                            // If the auction has already ended, immediately show "Bid over"
+                                            timerElement.innerHTML = "Bid over";
+                                        } else if (currentTime < startTime) {
+                                            // If the auction has not started, immediately show "Auction not started"
+                                            timerElement.innerHTML = "Auction not started";
+                                        }
+                                    })();
+                                </script>
+                            <% } %>
+                        <% }) %>    
+                    </div>
+                </div>
+            </main>
+        </section>
+    </div> 
+</body> 
+</html>

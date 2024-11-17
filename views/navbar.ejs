@@ -1,0 +1,35 @@
+<nav class="navbar navbar-expand-lg bg-dark navbar-dark fixed-top" role = "navigation">
+    <!-- Brand -->
+    <a class="navbar-brand" href="/"><span class="nav-title">OAS-Online Auction System</span></a>
+    <button class="navbar-toggler" data-toggle="collapse" data-target="#collapse_target">
+        <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="collapse_target">
+    <!-- Navbar links -->
+      <ul class="navbar-nav ml-auto">
+        <li class="nav-item">
+          <a class="nav-link" href="/">Home</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="/auctions">Auctions</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="/sell">Sell</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" href="/contact">Contact Us</a>
+          </li>
+        <% if(typeof islogin !== 'undefined' && islogin){ %>
+            <li class="nav-item">
+                <a class="nav-link" href="/logout">Logout</a>
+                </li>
+        <% }else{ %>
+            <li class="nav-item">
+                <a class="nav-link" href="/login">Log in</a>
+            </li>
+        <% }%>
+        
+      </ul>
+    </div>
+    
+</nav>
